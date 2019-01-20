@@ -1,12 +1,12 @@
 #!groovy
-podTemplate(
+podTemplate(  
   label: "skopeo-pod",
   cloud: "openshift",
   inheritFrom: "maven",
   containers: [
     containerTemplate(
       name: "jnlp",
-      image: "docker-registry.default.svc:5000/${GUID}-jenkins/jenkins-agent-appdev",
+      image: "docker-registry.default.svc:5000/8c7e-jenkins/jenkins-agent-appdev",
       resourceRequestMemory: "1Gi",
       resourceLimitMemory: "2Gi",
       resourceRequestCpu: "1",
@@ -95,9 +95,9 @@ podTemplate(
         
         openshiftVerifyService namespace: 'mg-tasks-dev', svcName: 'tasks', verbose: 'false'
 
-//	sh "curl -s -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks-mg-tasks-dev.apps.{$GUID}.openshift.opentlc.com/ws/tasks/integration_test_1 | grep \"HTTP/1.1 201 Created\""
-//	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks-mg-tasks-dev.apps.{$GUID}.openshift.opentlc.com/ws/tasks/1 | grep \"<title>integration_test_1</title>\""
-//	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks-mg-tasks-dev.apps.{$GUID}.openshift.opentlc.com/ws/tasks/1 | grep \"HTTP/1.1 204 No Content\""
+	sh "curl -s -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks-mg-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/integration_test_1 | grep \"HTTP/1.1 201 Created\""
+	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks-mg-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"<title>integration_test_1</title>\""
+	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks-mg-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"HTTP/1.1 204 No Content\""
       }
 
       // Copy Image to Nexus container registry
