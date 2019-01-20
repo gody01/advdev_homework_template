@@ -46,25 +46,17 @@ podTemplate(
 
       // TBD: The next two stages should run in parallel
       stage("Tests and Analysis") {
-		failFast true
-		when {
-			environment name: 'SETUP', value: 'true'
-		}
-      	parallel {
-        	// Using Maven run the unit tests
-		stage('Unit Tests') {
-			steps {
+          failFast true
+      	  parallel {
+		    stage('Unit Tests') {
 				echo "Running Unit Tests"
 			  	sh "${mvnCmd} test"
-			}
-		}
-
-		// Using Maven to call SonarQube for Code Analysis
-		stage('Code Analysis') {
-			echo "Running Code Analysis"
-			sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.gpte-hw-cicd.svc.cluster.local:9000 -Dsonar.projectName=${JOB_BASE_NAME}-${devTag} -Dsonar.projectVersion=${devTag}"
-		}
-	}
+		    }
+		    stage('Code Analysis') {
+			    echo "Running Code Analysis"
+			    sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.gpte-hw-cicd.svc.cluster.local:9000 -Dsonar.projectName=${JOB_BASE_NAME}-${devTag} -Dsonar.projectVersion=${devTag}"
+		    }
+	  }
       }
 
       // Publish the built war file to Nexus
