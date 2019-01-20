@@ -38,6 +38,7 @@ items:
       git:
         uri: ${REPO}
     strategy:
+      contextDir: openshift-tasks
       type: JenkinsPipeline
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile
