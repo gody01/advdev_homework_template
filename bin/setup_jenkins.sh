@@ -34,11 +34,11 @@ items:
     name: tasks-pipeline
   spec:
     source:
+      contextDir: openshift-tasks/
       type: Git
       git:
         uri: ${REPO}
     strategy:
-      contextDir: openshift-tasks
       type: JenkinsPipeline
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile
@@ -53,6 +53,7 @@ items:
 kind: List
 metadata: []" | oc create -f - -n ${GUID}-jenkins
 
+#       contextDir: openshift-tasks
 
 # Make sure that Jenkins is fully up and running before proceeding!
 while : ; do
