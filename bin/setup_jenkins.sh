@@ -14,7 +14,6 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 
 # Set up Jenkins with sufficient resources
 oc new-project ${GUID}-jenkins --display-name "${GUID} Jenkins"
-
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param \
 	MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param \
 	DISABLE_ADMINISTRATIVE_MONITORS=true
@@ -27,6 +26,34 @@ USER 1001' \
 
 # Create pipeline build config pointing to the ${REPO} with contextDir `openshift-tasks`
 # TBD
+echo "apiVersion: v1
+items:
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: tasks-pipeline
+  spec:
+    source:
+      contextDir: /openshift-tasks
+      type: Git
+      git:
+        uri: ${REPO}
+    strategy:
+      type: JenkinsPipeline
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: Jenkinsfile
+    sourceStrategy:
+      env:
+        - name: GUID
+          value: ${GUID}
+        - name: REPO
+          value: ${REPO}
+        - name: CLUSTER
+          value: ${CLUSTER}
+
+kind: List
+metadata: []" | oc create -f - -n ${GUID}-jenkins
+
 
 # Make sure that Jenkins is fully up and running before proceeding!
 while : ; do
