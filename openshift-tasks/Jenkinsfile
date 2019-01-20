@@ -133,15 +133,15 @@ podTemplate(
 
 	openshiftVerifyService namespace: '8c7e-tasks-prod', svcName: destApp, verbose: 'false'
 
-	sh "oc set env dc/tasks VERSION='${prodTag} (tasks-blue)'"
+	sh "oc set env dc/${destApp} VERSION='${prodTag} (tasks-blue)'"
       }
 
       stage('Switch over to new Version') {
         echo "Switching Production application to ${destApp}."
         // TBD: Execute switch
-	sh "oc set env  dc/tasks VERSION='${prodTag} (tasks-green)'"
-
 	sh 'oc patch route tasks -n 8c7e-tasks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
+
+	sh "oc set env  dc/tasks-green VERSION='${prodTag} (tasks-green)'"
 
       }
     }
