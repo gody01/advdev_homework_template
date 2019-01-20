@@ -73,7 +73,7 @@ podTemplate(
 
         // TBD: Build Image, tag Image
 
-        sh "oc start-build tasks --follow --from-file=http://nexus3.gpte-hw-cicd.svc.cluster.local:8081/repository/all-maven-public/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war -n 8c7e-tasks-dev"
+        sh "oc start-build tasks --follow --from-file=http://nexus3.gpte-hw-cicd.svc.cluster.local:8081/repository/releases/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war -n 8c7e-tasks-dev"
         openshiftTag alias: 'false', destStream: 'tasks', destTag: devTag, destinationNamespace: '8c7e-tasks-dev', namespace: '8c7e-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
 
       }
