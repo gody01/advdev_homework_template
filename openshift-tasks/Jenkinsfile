@@ -6,7 +6,7 @@ podTemplate(
   containers: [
     containerTemplate(
       name: "jnlp",
-      image: "docker-registry.default.svc:5000/${GUID}-jenkins/jenkins-agent-appdev",
+      image: "docker-registry.default.svc:5000/8c7e-jenkins/jenkins-agent-appdev",
       resourceRequestMemory: "1Gi",
       resourceLimitMemory: "2Gi",
       resourceRequestCpu: "1",
@@ -33,39 +33,38 @@ podTemplate(
       def version = getVersionFromPom("pom.xml")
 
       // TBD Set the tag for the development image: version + build number
-      def devTag  = ""
+      def devTag  = "${version}-${BUILD_NUMBER}"
       // Set the tag for the production image: version
-      def prodTag = ""
+      def prodTag = "${version}"
 
       // Using Maven build the war file
       // Do not run tests in this step
       stage('Build war') {
         echo "Building version ${devTag}"
-
-        // TBD: Execute Maven Build
+	sh "${mvnCmd} clean package -DskipTests"
       }
+
 
       // TBD: The next two stages should run in parallel
+      parallel (
 
-      // Using Maven run the unit tests
-      stage('Unit Tests') {
-        echo "Running Unit Tests"
+      	// Using Maven run the unit tests
+      	stage('Unit Tests') {
+      	  echo "Running Unit Tests"
+	  sh "${mvnCmd} test"
+      	}
 
-        // TBD: Execute Unit Tests
-      }
-
-      // Using Maven to call SonarQube for Code Analysis
-      stage('Code Analysis') {
-        echo "Running Code Analysis"
-
-        // TBD: Execute Sonarqube Tests
-      }
+      	// Using Maven to call SonarQube for Code Analysis
+      	stage('Code Analysis') {
+          echo "Running Code Analysis"
+	  sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.gpte-hw-cicd.svc.cluster.local:9000 -Dsonar.projectName=${JOB_BASE_NAME}-${devTag} -Dsonar.projectVersion=${devTag}"
+	}
+      )
 
       // Publish the built war file to Nexus
       stage('Publish to Nexus') {
         echo "Publish to Nexus"
-
-        // TBD: Publish to Nexus
+	sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.gpte-hw-cicd.svc.cluster.local:8081/repository/all-maven-public"
       }
 
       // Build the OpenShift Image in OpenShift and tag it.
@@ -73,6 +72,10 @@ podTemplate(
         echo "Building OpenShift container image tasks:${devTag}"
 
         // TBD: Build Image, tag Image
+
+        sh "oc start-build tasks --follow --from-file=http://nexus3.gpte-hw-cicd.svc.cluster.local:8081/repository/all-maven-public/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war -n 8c7e-tasks-dev"
+        openshiftTag alias: 'false', destStream: 'tasks', destTag: devTag, destinationNamespace: '8c7e-tasks-dev', namespace: '8c7e-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
+
       }
 
       // Deploy the built image to the Development Environment.
@@ -82,6 +85,14 @@ podTemplate(
         // TBD: Deploy to development Project
         //      Set Image, Set VERSION
         //      Make sure the application is running and ready before proceeding
+        sh "oc set image dc/tasks tasks=docker-registry.default.svc:5000/8c7e-tasks-dev/tasks:${devTag} -n 8c7e-tasks-dev"
+
+        openshiftDeploy depCfg: 'tasks', namespace: '8c7e-tasks-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
+
+        openshiftVerifyDeployment depCfg: 'tasks', namespace: '8c7e-tasks-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
+        
+        openshiftVerifyService namespace: '8c7e-tasks-dev', svcName: 'tasks', verbose: 'false'
+
       }
 
       // Copy Image to Nexus container registry

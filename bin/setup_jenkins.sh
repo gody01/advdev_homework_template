@@ -14,6 +14,7 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 
 # Set up Jenkins with sufficient resources
 oc new-project ${GUID}-jenkins --display-name "${GUID} Jenkins"
+
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param \
 	MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param \
 	DISABLE_ADMINISTRATIVE_MONITORS=true
