@@ -84,7 +84,7 @@ podTemplate(
         //      Make sure the application is running and ready before proceeding
         sh "oc set image dc/tasks tasks=docker-registry.default.svc:5000/8c7e-tasks-dev/tasks:${devTag} -n 8c7e-tasks-dev"
 
-	sh "oc set env  dc/tasks VERSION='${devTag} (tasks-dev)'"
+//	sh "oc set env  dc/tasks-dev VERSION='${devTag} (tasks-dev)'"
 
         openshiftDeploy depCfg: 'tasks', namespace: '8c7e-tasks-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
 
@@ -133,7 +133,7 @@ podTemplate(
 
 	openshiftVerifyService namespace: '8c7e-tasks-prod', svcName: destApp, verbose: 'false'
 
-	sh "oc set env dc/${destApp} VERSION='${prodTag} (tasks-blue)'"
+//	sh "oc set env dc/${destApp} VERSION='${prodTag} (tasks-blue)'"
       }
 
       stage('Switch over to new Version') {
@@ -141,7 +141,7 @@ podTemplate(
         // TBD: Execute switch
 	sh 'oc patch route tasks -n 8c7e-tasks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
 
-	sh "oc set env  dc/tasks-green VERSION='${prodTag} (tasks-green)'"
+//	sh "oc set env  dc/tasks-green VERSION='${prodTag} (tasks-green)'"
 
       }
     }
