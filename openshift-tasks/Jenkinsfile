@@ -73,8 +73,8 @@ podTemplate(
 
         // TBD: Build Image, tag Image
 
-        sh "oc start-build tasks --follow --from-file=http://nexus3.gpte-hw-cicd.svc.cluster.local:8081/repository/all-maven-public/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war -n mg-tasks-dev"
-        openshiftTag alias: 'false', destStream: 'tasks', destTag: devTag, destinationNamespace: 'mg-tasks-dev', namespace: 'mg-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
+        sh "oc start-build tasks --follow --from-file=http://nexus3.gpte-hw-cicd.svc.cluster.local:8081/repository/all-maven-public/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war -n 8c7e-tasks-dev"
+        openshiftTag alias: 'false', destStream: 'tasks', destTag: devTag, destinationNamespace: '8c7e-tasks-dev', namespace: '8c7e-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
 
       }
 
@@ -85,19 +85,19 @@ podTemplate(
         // TBD: Deploy to development Project
         //      Set Image, Set VERSION
         //      Make sure the application is running and ready before proceeding
-        sh "oc set image dc/tasks tasks=docker-registry.default.svc:5000/mg-tasks-dev/tasks:${devTag} -n mg-tasks-dev"
+        sh "oc set image dc/tasks tasks=docker-registry.default.svc:5000/8c7e-tasks-dev/tasks:${devTag} -n 8c7e-tasks-dev"
 
 	sh "oc set env  dc/tasks VERSION='${devTag} (tasks-dev)'"
 
-        openshiftDeploy depCfg: 'tasks', namespace: 'mg-tasks-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
+        openshiftDeploy depCfg: 'tasks', namespace: '8c7e-tasks-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
 
-        openshiftVerifyDeployment depCfg: 'tasks', namespace: 'mg-tasks-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
+        openshiftVerifyDeployment depCfg: 'tasks', namespace: '8c7e-tasks-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
         
-        openshiftVerifyService namespace: 'mg-tasks-dev', svcName: 'tasks', verbose: 'false'
+        openshiftVerifyService namespace: '8c7e-tasks-dev', svcName: 'tasks', verbose: 'false'
 
-	sh "curl -s -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks-mg-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/integration_test_1 | grep \"HTTP/1.1 201 Created\""
-	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks-mg-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"<title>integration_test_1</title>\""
-	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks-mg-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"HTTP/1.1 204 No Content\""
+	sh "curl -s -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks-8c7e-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/integration_test_1 | grep \"HTTP/1.1 201 Created\""
+	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks-8c7e-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"<title>integration_test_1</title>\""
+	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks-8c7e-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"HTTP/1.1 204 No Content\""
       }
 
       // Copy Image to Nexus container registry
@@ -105,7 +105,7 @@ podTemplate(
         echo "Copy image to Nexus container registry"
 
         // TBD: Copy image to Nexus container registry
-    	sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:redhat docker://docker-registry.default.svc.cluster.local:5000/mg-tasks-dev/tasks:${devTag} docker://nexus-registry.mg-nexus.svc.cluster.local:5000/tasks:${devTag}"
+    	sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:redhat docker://docker-registry.default.svc.cluster.local:5000/8c7e-tasks-dev/tasks:${devTag} docker://nexus-registry.8c7e-nexus.svc.cluster.local:5000/tasks:${devTag}"
 
         // TBD: Tag the built image with the production tag.
       }
