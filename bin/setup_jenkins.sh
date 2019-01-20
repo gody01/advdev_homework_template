@@ -34,7 +34,6 @@ items:
     name: tasks-pipeline
   spec:
     source:
-      contextDir: /openshift-tasks
       type: Git
       git:
         uri: ${REPO}
@@ -50,7 +49,6 @@ items:
           value: ${REPO}
         - name: CLUSTER
           value: ${CLUSTER}
-
 kind: List
 metadata: []" | oc create -f - -n ${GUID}-jenkins
 
