@@ -92,9 +92,9 @@ podTemplate(
         
         openshiftVerifyService namespace: '8c7e-tasks-dev', svcName: 'tasks', verbose: 'false'
 
-	sh "curl -s -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks-8c7e-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/integration_test_1 | grep \"HTTP/1.1 201 Created\""
-	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks-8c7e-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"<title>integration_test_1</title>\""
-	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks-8c7e-tasks-dev.apps.8c7e.openshift.opentlc.com/ws/tasks/1 | grep \"HTTP/1.1 204 No Content\""
+	sh "curl -s -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks-8c7e-tasks-dev.apps.na311.openshift.opentlc.com/ws/tasks/integration_test_1 | grep \"HTTP/1.1 201 Created\""
+	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks-8c7e-tasks-dev.apps.na311.openshift.opentlc.com/ws/tasks/1 | grep \"<title>integration_test_1</title>\""
+	sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks-8c7e-tasks-dev.apps.na311.openshift.opentlc.com/ws/tasks/1 | grep \"HTTP/1.1 204 No Content\""
       }
 
       // Copy Image to Nexus container registry
