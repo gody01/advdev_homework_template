@@ -44,6 +44,25 @@ podTemplate(
 	sh "${mvnCmd} clean package -DskipTests"
       }
 
+  stages {
+    stage('Prvi stage') {
+      parallel {
+        stage('Prvi stage') {
+          steps {
+            sh '''echo A
+'''
+          }
+        }
+        stage('Drugi stage') {
+          steps {
+            sh '''echo B
+'''
+          }
+        }
+      }
+    }
+
+
       // TBD: The next two stages should run in parallel
 //      stage("Tests and Analysis") {
 //      	  parallel {
