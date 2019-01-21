@@ -58,7 +58,6 @@ podTemplate(
 			    sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.gpte-hw-cicd.svc.cluster.local:9000 -Dsonar.projectName=${JOB_BASE_NAME}-${devTag} -Dsonar.projectVersion=${devTag}"
 		    	}
 		   }
-	  }
       }
 
       // Publish the built war file to Nexus
