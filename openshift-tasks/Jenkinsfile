@@ -46,16 +46,16 @@ podTemplate(
 
       // TBD: The next two stages should run in parallel
       stage("Tests and Analysis") {
-      	  parallel {
-		    stage('Unit Tests') {
+      	  parallel (
+		    'Unit Tests': {
 				echo "Running Unit Tests"
 			  	sh "${mvnCmd} test"
 		    }
-		    stage('Code Analysis') {
+		    'Code Analysis': {
 			    echo "Running Code Analysis"
 			    sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.gpte-hw-cicd.svc.cluster.local:9000 -Dsonar.projectName=${JOB_BASE_NAME}-${devTag} -Dsonar.projectVersion=${devTag}"
 		    }
-	  }
+	  )
       }
 
       // Publish the built war file to Nexus
